@@ -1,12 +1,26 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth';
 import { PokemonService } from '../../services/pokemon';
 
 @Component({
   selector: 'app-setup',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    MatCardModule, 
+    MatFormFieldModule, 
+    MatSelectModule, 
+    MatInputModule, 
+    MatButtonModule
+  ],
   templateUrl: './setup.html',
   styleUrl: './setup.css'
 })
@@ -17,22 +31,27 @@ export class SetupComponent implements OnInit {
   availableUsers: any[] = [];
   pokemonSets: any[] = [];
 
+  // Form State Variables
+  playerCount: number = 1;
+  matchCount: number = 4;
+  selectedSet: string = '';
+  selectedOpponents: any[] = [];
+
   async ngOnInit() {
-    // Fetch previously logged-in users from Firebase
     try {
       this.availableUsers = await this.authService.getAllUsers();
     } catch (error) {
       console.error('Error fetching users:', error);
     }
 
-    // Fetch card sets from the Pokemon TCG API
     this.pokemonService.getSets().subscribe({
-      next: (data) => {
-        this.pokemonSets = data.sets; 
-      },
-      error: (err) => {
-        console.error('Error fetching Pokémon sets:', err);
-      }
+      next: (data) => { this.pokemonSets = data.sets; },
+      error: (err) => { console.error('Error fetching Pokémon sets:', err); }
     });
+  }
+
+  startGame() {
+    console.log('Starting game with:', this.playerCount, this.matchCount, this.selectedSet, this.selectedOpponents);
+    // We will add router navigation to the game board here later
   }
 }

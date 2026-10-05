@@ -1,1 +1,53 @@
-<p>setup works!</p>
+<div class="setup-container">
+  <mat-card class="setup-card">
+    <mat-card-header>
+      <mat-card-title>Game Setup</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content class="form-content">
+      <!-- Number of Players -->
+      <mat-form-field appearance="fill">
+        <mat-label>Number of Players</mat-label>
+        <mat-select [(ngModel)]="playerCount">
+          <mat-option [value]="1">1 Player</mat-option>
+          <mat-option [value]="2">2 Players</mat-option>
+          <mat-option [value]="3">3 Players</mat-option>
+          <mat-option [value]="4">4 Players</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Opponent Selection (Only shows if players > 1) -->
+      <mat-form-field appearance="fill" *ngIf="playerCount > 1">
+        <mat-label>Select Opponents</mat-label>
+        <mat-select [(ngModel)]="selectedOpponents" multiple>
+          <mat-option *ngFor="let user of availableUsers" [value]="user.uid">
+            {{ user.displayName || user.email }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Number of Matches -->
+      <mat-form-field appearance="fill">
+        <mat-label>Number of Matches (pairs)</mat-label>
+        <input matInput type="number" [(ngModel)]="matchCount" min="2" max="20">
+        <mat-hint>Must be evenly divided by {{ playerCount }}</mat-hint>
+      </mat-form-field>
+
+      <!-- Pokemon Card Set -->
+      <mat-form-field appearance="fill">
+        <mat-label>Pokémon Card Set</mat-label>
+        <mat-select [(ngModel)]="selectedSet">
+          <mat-option *ngFor="let set of pokemonSets" [value]="set.code">
+            {{ set.name }} ({{ set.series }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-actions class="center-button">
+      <button mat-raised-button color="primary" (click)="startGame()" [disabled]="!selectedSet || matchCount % playerCount !== 0">
+        Start Game
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
