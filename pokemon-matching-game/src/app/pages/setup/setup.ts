@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth';
 import { PokemonService } from '../../services/pokemon';
+import { Router } from '@angular/router';
+import { GameService } from '../../services/game';
 
 @Component({
   selector: 'app-setup',
@@ -27,6 +29,8 @@ import { PokemonService } from '../../services/pokemon';
 export class SetupComponent implements OnInit {
   private authService = inject(AuthService);
   private pokemonService = inject(PokemonService);
+  private gameService = inject(GameService);
+  private router = inject(Router);
 
   availableUsers: any[] = [];
   pokemonSets: any[] = [];
@@ -51,7 +55,13 @@ export class SetupComponent implements OnInit {
   }
 
   startGame() {
-    console.log('Starting game with:', this.playerCount, this.matchCount, this.selectedSet, this.selectedOpponents);
-    // We will add router navigation to the game board here later
+    const config = {
+      playerCount: this.playerCount,
+      matchCount: this.matchCount,
+      selectedSet: this.selectedSet,
+      selectedOpponents: this.selectedOpponents
+    };
+    this.gameService.setGameConfig(config);
+    this.router.navigate(['/game']);
   }
 }
