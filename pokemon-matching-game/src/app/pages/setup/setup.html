@@ -37,7 +37,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Pokémon Card Set</mat-label>
         <mat-select [(ngModel)]="selectedSet">
-          <mat-option *ngFor="let set of pokemonSets" [value]="set.code">
+          <mat-option *ngFor="let set of pokemonSets" [value]="set.id">
             {{ set.name }} ({{ set.series }})
           </mat-option>
         </mat-select>

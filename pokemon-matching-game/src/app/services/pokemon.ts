@@ -7,15 +7,14 @@ import { Observable } from 'rxjs';
 })
 export class PokemonService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://api.pokemontcg.io/v1';
+  private apiUrl = 'https://api.pokemontcg.io/v2';
 
-  // Gets all available Pokémon card sets
   getSets(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/sets`); //[cite: 2]
+    return this.http.get(`${this.apiUrl}/sets?orderBy=-releaseDate`);
   }
 
-  // Gets all cards belonging to a specific set
-  getCardsBySet(setCode: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/cards?setCode=${setCode}`); //[cite: 2]
+  // v2 uses a specific query format for filtering by set id
+  getCardsBySet(setId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/cards?q=set.id:${setId}`);
   }
 }

@@ -49,8 +49,12 @@ export class SetupComponent implements OnInit {
     }
 
     this.pokemonService.getSets().subscribe({
-      next: (data) => { this.pokemonSets = data.sets; },
-      error: (err) => { console.error('Error fetching Pokémon sets:', err); }
+      next: (response) => {
+        this.pokemonSets = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching Pokémon sets:', err);
+      }
     });
   }
 
