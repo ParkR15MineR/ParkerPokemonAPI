@@ -20,4 +20,4 @@ export class LoginComponent {
     // Routes to the setup page once we build it
     this.router.navigate(['/setup']);
   }
-}3-33333
+}

@@ -1,1 +1,40 @@
-<p>game works!</p>
+<div class="game-container">
+  <header class="scoreboard">
+    <button class="back-btn" (click)="goToSetup()">← Back to Setup</button>
+  <h2>Pokémon Match</h2>
+  <div class="players-container">
+    <!-- Renders a badge for each player. The active-turn class is applied if it's their turn -->
+    <div 
+      class="player-badge" 
+      *ngFor="let player of players; let i = index"
+      [class.active-turn]="i === currentPlayerIndex">
+      
+      <span class="player-name">{{ player.name }}</span>
+      <span class="player-score">{{ player.score }}</span>
+      
+    </div>
+  </div>
+</header>
+
+  <div class="card-grid">
+  <div 
+    class="card" 
+    *ngFor="let card of boardCards" 
+    [class.flipped]="card.isFlipped"
+    [class.matched]="card.isMatched" 
+    (click)="flipCard(card)">
+    <!-- keep the inner card html exactly the same -->
+      
+      <div class="card-inner">
+        <!-- The back of the card (pokeball logo goes here later) -->
+        <div class="card-back"></div>
+        
+        <!-- The front of the card (pokemon image goes here later) -->
+        <div class="card-front">
+          <img [src]="card.imageUrl" alt="Pokémon" class="pokemon-image">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

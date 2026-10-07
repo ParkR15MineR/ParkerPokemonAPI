@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +10,24 @@ export class PokemonService {
   private apiUrl = 'https://api.pokemontcg.io/v2';
 
   getSets(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/sets?orderBy=-releaseDate`);
-  }
+  // Temporarily bypassing the broken API with local mock data
+  return of({
+    data: [
+      { id: 'sv1', name: 'Scarlet & Violet', series: 'Scarlet & Violet', releaseDate: '2023-03-31' },
+      { id: 'swsh12', name: 'Silver Tempest', series: 'Sword & Shield', releaseDate: '2022-11-11' },
+      { id: 'base1', name: 'Base Set', series: 'Base', releaseDate: '1999-01-09' }
+    ]
+  });
+}
 
-  // v2 uses a specific query format for filtering by set id
-  getCardsBySet(setId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/cards?q=set.id:${setId}`);
-  }
+    // Add this right below your mocked getSets() method
+getCardsBySet(setId: string): Observable<any> {
+  // Bypassing the 502 error with reliable mock artwork
+  const mockCards = [1, 4, 7, 25, 150, 133, 143, 94, 6, 9].map(num => ({
+    id: `mock-${num}`,
+    images: { small: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${num}.png` }
+  }));
+
+  return of({ data: mockCards });
+}
 }

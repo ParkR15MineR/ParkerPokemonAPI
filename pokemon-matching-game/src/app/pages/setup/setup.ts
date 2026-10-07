@@ -50,7 +50,9 @@ export class SetupComponent implements OnInit {
 
     this.pokemonService.getSets().subscribe({
       next: (response) => {
-        this.pokemonSets = response.data;
+        this.pokemonSets = response.data.sort((a: any, b: any) => {
+          return new Date(b.releaseDate).getTime() - new Date(a.realseDate).getTime();
+        });
       },
       error: (err) => {
         console.error('Error fetching Pokémon sets:', err);
