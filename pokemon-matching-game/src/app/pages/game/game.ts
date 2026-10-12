@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameService } from '../../services/game';
 import { PokemonService } from '../../services/pokemon';
-import { Router } from 'express';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -25,17 +25,14 @@ export class GameComponent implements OnInit {
   currentPlayerIndex: number = 0;
 
   ngOnInit() {
-    const config = this.gameService.getGameConfig();
-    const matchCount = config ? config.matchCount : 6; 
-    const setId = config ? config.selectedSet : 'base1';
-    const playerCount = config ? config.playerCount : 1;
+  const config = this.gameService.getGameConfig();
+  const matchCount = config ? config.matchCount : 6; 
+  
+  // Changed fallback from 'base1' to '0' to match PokéAPI
+  const setId = (config && config.selectedSet) ? config.selectedSet : '0'; 
 
-    // Initialize our players array
-    for (let i = 0; i < playerCount; i++) {
-      this.players.push({ name: `Player ${i + 1}`, score: 0 });
-    }
-
-    this.pokemonService.getCardsBySet(setId).subscribe(response => {
+  this.pokemonService.getCardsBySet(setId).subscribe({
+    next: (response) => {
       const uniqueCards = response.data.slice(0, matchCount);
       const pairs = [...uniqueCards, ...uniqueCards];
 
@@ -48,8 +45,13 @@ export class GameComponent implements OnInit {
           isFlipped: false,
           isMatched: false
         }));
-    });
-  }
+    },
+    error: (err) => {
+      // Added an error log so we can see if the API crashes again
+      console.error('Failed to load Pokémon cards:', err);
+    }
+  });
+}
 
   flipCard(card: any) {
     if (this.lockBoard || card.isFlipped || card.isMatched) return;

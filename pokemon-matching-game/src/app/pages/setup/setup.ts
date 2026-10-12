@@ -42,16 +42,18 @@ export class SetupComponent implements OnInit {
   selectedOpponents: any[] = [];
 
   async ngOnInit() {
-    try {
-      this.availableUsers = await this.authService.getAllUsers();
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
+    // 1. Mock dummy users since we are bypassing the real Firebase login
+    this.availableUsers = [
+      { uid: '1', displayName: 'Ash Ketchum' },
+      { uid: '2', displayName: 'Misty' },
+      { uid: '3', displayName: 'Brock' }
+    ];
 
     this.pokemonService.getSets().subscribe({
       next: (response) => {
         this.pokemonSets = response.data.sort((a: any, b: any) => {
-          return new Date(b.releaseDate).getTime() - new Date(a.realseDate).getTime();
+          // 2. Fixed the typo: 'realseDate' is now 'releaseDate'
+          return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
         });
       },
       error: (err) => {

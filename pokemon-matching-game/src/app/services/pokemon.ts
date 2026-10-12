@@ -1,33 +1,45 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PokemonService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://api.pokemontcg.io/v2';
 
   getSets(): Observable<any> {
-  // Temporarily bypassing the broken API with local mock data
-  return of({
-    data: [
-      { id: 'sv1', name: 'Scarlet & Violet', series: 'Scarlet & Violet', releaseDate: '2023-03-31' },
-      { id: 'swsh12', name: 'Silver Tempest', series: 'Sword & Shield', releaseDate: '2022-11-11' },
-      { id: 'base1', name: 'Base Set', series: 'Base', releaseDate: '1999-01-09' }
-    ]
-  });
-}
+    return of({
+      data: [
+        { id: '0', name: 'Generation 1 (Kanto)', series: 'Classic', releaseDate: '1996-02-27' },
+        { id: '151', name: 'Generation 2 (Johto)', series: 'Classic', releaseDate: '1999-11-21' },
+        { id: '251', name: 'Generation 3 (Hoenn)', series: 'Advance', releaseDate: '2002-11-21' },
+        { id: '386', name: 'Generation 4 (Sinnoh)', series: 'Diamond & Pearl', releaseDate: '2006-09-28' }
+      ]
+    });
+  }
 
-    // Add this right below your mocked getSets() method
-getCardsBySet(setId: string): Observable<any> {
-  // Bypassing the 502 error with reliable mock artwork
-  const mockCards = [1, 4, 7, 25, 150, 133, 143, 94, 6, 9].map(num => ({
-    id: `mock-${num}`,
-    images: { small: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${num}.png` }
-  }));
+  getCardsBySet(offset: string): Observable<any> {
+    const limit = 50; 
+    
+    // Fetch directly from the live PokéAPI using the generation offset
+    return this.http.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`).pipe(
+      map((response: any) => {
+        // Shuffle the results
+        const randomPokemon = response.results.sort(() => Math.random() - 0.5);
 
-  return of({ data: mockCards });
-}
+        // Map it into the structure our Game Board already understands
+        const mappedCards = randomPokemon.map((poke: any) => {
+          const pokeId = poke.url.split('/').filter(Boolean).pop();
+          return {
+            id: pokeId,
+            images: { small: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeId}.png` }
+          };
+        });
+        
+        return { data: mappedCards };
+      })
+    );
+  }
 }
